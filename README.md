@@ -28,9 +28,6 @@ Current release: **v1.1.0**, verified with **Blender 5.2.3**.
 
 ### [Download BM Stadium DAE Exporter v1.1.0 for Blender 5.2](releases/bm_stadium_dae_v1.1.0_Blender_5.2.zip)
 
-SHA-256:
-`A14A82B1D94B1A0C6E4655D6649DC075FBF39579858A6EC580713DBEA810463D`
-
 Do not extract the ZIP before installing it in Blender.
 
 ## Installation

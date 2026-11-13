@@ -38,7 +38,6 @@ All three source Blend hashes and live scene states remained unchanged.
 
 - File: `bm_stadium_dae_v1.1.0_Blender_5.2.zip`
 - Files in archive: 21
-- SHA-256: `A14A82B1D94B1A0C6E4655D6649DC075FBF39579858A6EC580713DBEA810463D`
 
 Static validation does not establish BeamNG loading, performance or exact
 source-game rendering fidelity.
