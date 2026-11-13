@@ -1,7 +1,8 @@
 # Team update workflow
 
-The `main` branch should always contain the current verified source and installable
-release. Use a short-lived branch and pull request for each update.
+The `main` branch should always contain the current verified source and
+documentation. Installable ZIPs belong in formal GitHub Releases. Use a
+short-lived branch and pull request for each update.
 
 ## Making an update
 
@@ -13,9 +14,14 @@ release. Use a short-lived branch and pull request for each update.
 4. Update `CHANGELOG.md` and the current version/download in `README.md`.
 5. Run the focused Blender test and relevant exporter regression fixtures.
 6. Run `tools/build_release.ps1` from PowerShell.
-7. Verify the printed SHA-256 and install the ZIP in Blender 5.2.x.
-8. Commit the source and versioned ZIP, then open a pull request.
+7. Verify the locally printed SHA-256 and install the ZIP in Blender 5.2.x.
+8. Commit the source and documentation, then open a pull request. Do not commit
+   the generated ZIP from `dist/`.
 9. Merge only after another team member reviews the validation evidence.
+10. Create and push the version tag, such as `v1.1.1`, from the verified `main`
+    commit.
+11. Create a GitHub Release from that tag, attach the versioned ZIP from `dist/`,
+    add concise release notes, and mark it as the latest release.
 
 ## Versioning
 
@@ -23,8 +29,8 @@ release. Use a short-lived branch and pull request for each update.
 - Minor release (`1.2.0`): new exporter behavior or validation feature.
 - Major release (`2.0.0`): incompatible package or workflow change.
 
-Do not overwrite an older versioned ZIP. Add a new ZIP so Git history preserves
-exactly what was installed for each release.
+Do not overwrite an older release asset. Publish a new version tag and GitHub
+Release so the Releases history preserves exactly what was installed.
 
 ## Recommended branch protection
 

@@ -14,7 +14,7 @@ setting, and the most common errors in BM Stadium DAE Exporter v1.1.0.
 ## Install or Update
 
 1. Download `bm_stadium_dae_v1.1.0_Blender_5.2.zip` from the repository's
-   `releases` folder.
+   **GitHub Releases** page.
 2. In Blender, open **Edit → Preferences → Add-ons**.
 3. Open the Add-ons menu and select **Install from Disk…**.
 4. Select the ZIP without extracting it.

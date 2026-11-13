@@ -26,7 +26,7 @@ Current release: **v1.1.0**, verified with **Blender 5.2.3**.
 
 ## Download
 
-### [Download BM Stadium DAE Exporter v1.1.0 for Blender 5.2](releases/bm_stadium_dae_v1.1.0_Blender_5.2.zip)
+### [Download BM Stadium DAE Exporter v1.1.0 for Blender 5.2](https://github.com/Mjamfan22/BM-Stadium-DAE-Exporter/releases/download/v1.1.0/bm_stadium_dae_v1.1.0_Blender_5.2.zip)
 
 Do not extract the ZIP before installing it in Blender.
 
@@ -128,9 +128,11 @@ the resulting venue in BeamNG.
 ```text
 bm_stadium_dae/   Current clean add-on source
 docs/             User guide, QA evidence, and team workflow
-releases/         Versioned, installable Blender ZIP files
 tools/            Release-building helper
 ```
+
+Versioned installable ZIPs and release notes are published under
+**[GitHub Releases](https://github.com/Mjamfan22/BM-Stadium-DAE-Exporter/releases)**.
 
 The `main` branch is the current verified version. Team updates should use a short
 branch and pull request; see **[Team Update Workflow](docs/TEAM-WORKFLOW.md)** and

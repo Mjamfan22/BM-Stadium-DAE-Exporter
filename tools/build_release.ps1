@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $sourceRoot = Join-Path $repositoryRoot "bm_stadium_dae"
-$releaseRoot = Join-Path $repositoryRoot "releases"
+$releaseRoot = Join-Path $repositoryRoot "dist"
 $releasePath = Join-Path $releaseRoot "bm_stadium_dae_v${Version}_Blender_5.2.zip"
 
 if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) {
