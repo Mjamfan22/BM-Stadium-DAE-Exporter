@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """One serializer for file-menu exports and saved collection batches."""
 from pathlib import Path
+import json
 import os
 import uuid
 import tempfile
@@ -16,7 +17,8 @@ from .scene_io import bake_cache_transforms, write_dae, source_name, scene_unit_
 DEFAULTS = dict(export_format='DAE', apply_modifiers=True, custom_normals=True, active_uv_only=False,
                 active_color_only=False, global_scale=1., compress=True, preserve_cache_layout=True, preserve_edge_marks=True,
                 material_package=False, game_directory='', material_resolution='1024', material_alpha='BLEND', emission_nits=100.,
-                approximate_glass=False, glass_opacity=.15, approximate_sheen=True, bake_object_materials=True)
+                approximate_glass=False, glass_opacity=.15, approximate_sheen=True, bake_object_materials=True,
+                static_stadium=False)
 
 
 def atomic_sibling(path, suffix):
@@ -69,6 +71,11 @@ def prepare_export(context, candidates, options=None, report=lambda level, messa
                          active_uv_only=opts['active_uv_only'], active_color_only=opts['active_color_only'],
                          preserve_edge_marks=opts['preserve_edge_marks'], report=report)
     data = extractor.extract(objects)
+    if opts.get('static_stadium'):
+        unexpected = [r['name'] for r in extractor.omitted_objects if not r['expected']]
+        if unexpected:
+            raise ValueError('Required stadium objects evaluated empty: ' + ', '.join(unexpected[:12]) +
+                             '. Check Geometry Nodes, visibility masks and instance sources; no files replaced.')
     objects = extractor.exported_objects
     if not objects:
         raise ValueError('No evaluated faces or edges in the export scope; enable Apply Modifiers for Geometry Nodes')
@@ -91,7 +98,7 @@ def prepare_export(context, candidates, options=None, report=lambda level, messa
         if opts['preserve_cache_layout']:
             restore_layout(data, objects)
     return dict(data=data, objects=objects, scale=scale, options=opts, material_sources=extractor.material_sources,
-                active_uv_names=extractor.active_uv_names)
+                active_uv_names=extractor.active_uv_names, omitted_objects=extractor.omitted_objects)
 
 
 def export_batch(context, requests, report=lambda level, message: None):
@@ -122,7 +129,32 @@ def export_batch(context, requests, report=lambda level, message: None):
             if prepared['options']['export_format'] == 'CDAE':
                 write_cache(temp, prepared['data'], prepared['options']['compress'])
             else:
-                write_dae(temp, prepared['data'], prepared['objects'], prepared['scale'])
+                profile = write_dae(temp, prepared['data'], prepared['objects'], prepared['scale'],
+                                    static_stadium=prepared['options'].get('static_stadium',False))
+                if profile is not None:
+                    profile.update(exporterVersion='1.1.2', blender=bpy.app.version_string,
+                                   omittedObjects=prepared['omitted_objects'])
+                    staged_report = atomic_sibling(path,'tmp')
+                    staged.append(staged_report)
+                    staged_report.write_text(json.dumps(profile,indent=2),encoding='utf8')
+                    outputs.append((staged_report,path.with_suffix('.export-report.json')))
+                    audit = prepared['options'].get('visibility_audit')
+                    if audit is not None:
+                        audit = json.loads(json.dumps(audit))
+                        exported = {o.name for o in prepared['objects']}
+                        skipped = {r['name']:r for r in prepared['omitted_objects']}
+                        for row in audit['objects']:
+                            row['selectedForEvaluation'] = row['included']
+                            row['exported'] = row['name'] in exported
+                            row['included'] = row['exported']
+                            if row['name'] in skipped: row['evaluation'] = skipped[row['name']]
+                        audit['selectedMeshes'] = audit['exportedMeshes']
+                        audit['exportedMeshes'] = len(exported)
+                        audit['exporterVersion'] = '1.1.2'
+                        audit['countsDescribe'] = 'selection reasons; exported is final geometry result'
+                        staged_audit = atomic_sibling(path,'tmp');staged.append(staged_audit)
+                        staged_audit.write_text(json.dumps(audit,indent=2),encoding='utf8')
+                        outputs.append((staged_audit,path.with_suffix('.visibility.json')))
             outputs.append((temp, path))
         destinations = [os.path.normcase(str(path)) for temp, path in outputs]
         if len(destinations) != len(set(destinations)):

@@ -487,6 +487,11 @@ def stage_package(context, prepared, destination, stage_dir, report):
             if plan.get('glass'):
                 transmission = np.clip(sample('Transmission Weight')[:,:,0],0,1)
                 alpha *= 1 - transmission * (1 - float(opts.get('glass_opacity', .15)))
+                plan['exported_opacity_range'] = [float(alpha.min()), float(alpha.max())]
+                if 0 < float(alpha.max()) < .02:
+                    warning = 'Glass exports below 2% opacity; inspect the source Alpha and Glass Opacity before in-game use'
+                    plan['warnings'] = list(plan['warnings']) + [warning]
+                    report('WARNING', material.name + ': ' + warning)
             base[:, :, 3] = 1  # BeamNG opacity is explicit, not accidentally multiplied twice.
             stage['baseColorMap'] = store_map(base, 'color', True)
             for name, key in [('Roughness', 'roughnessMap'), ('Metallic', 'metallicMap')]:

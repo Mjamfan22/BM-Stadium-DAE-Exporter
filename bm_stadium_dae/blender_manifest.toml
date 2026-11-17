@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "bm_stadium_dae"
-version = "1.1.0"
+version = "1.1.2"
 name = "BM Stadium DAE Exporter"
 tagline = "Export stadium meshes, textures and BeamNG materials together"
 maintainer = "BM; export engine adapted from Blenux"

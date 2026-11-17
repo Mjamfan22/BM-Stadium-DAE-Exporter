@@ -1,7 +1,7 @@
 # BM Stadium DAE Exporter User Guide
 
 This guide covers installation, scene review, validation, export, every user-facing
-setting, and the most common errors in BM Stadium DAE Exporter v1.1.0.
+setting, and the most common errors in BM Stadium DAE Exporter v1.1.2.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ setting, and the most common errors in BM Stadium DAE Exporter v1.1.0.
 
 ## Install or Update
 
-1. Download `bm_stadium_dae_v1.1.0_Blender_5.2.zip` from the repository's
+1. Download `bm_stadium_dae_v1.1.2_Blender_5.2.zip` from the repository's
    **GitHub Releases** page.
 2. In Blender, open **Edit → Preferences → Add-ons**.
 3. Open the Add-ons menu and select **Install from Disk…**.
@@ -29,7 +29,7 @@ export.
 
 Press `N` while the mouse is over the 3D View and open the **Stadium** tab.
 
-The panel contains three actions:
+The panel contains four actions:
 
 1. **Check Stadium Visibility** classifies the venue meshes without changing the
    scene. It creates or refreshes a Blender text block named
@@ -37,6 +37,9 @@ The panel contains three actions:
 2. **Validate Full Export…** performs a non-writing preflight using the intended
    output path and export settings.
 3. **Export Stadium…** writes the complete DAE and material package.
+4. **Copy Last Error** copies the complete failure, versions and settings after
+   an export or validation error. It sends nothing automatically. The copied text
+   includes local paths, so redact personal details before posting publicly.
 
 The real export is also available at **File → Export → BeamNG Stadium (.dae)**.
 
@@ -91,8 +94,12 @@ and start the export. Large venues may take substantial time. Do not close Blend
 or change the scene until Blender reports that the export completed.
 
 The exporter remembers the last destination in the scene. A successful export
-creates a DAE, material definitions, a material report, a visibility report, and
-a content-addressed texture folder. Keep the complete set together.
+creates a DAE, material definitions, material and visibility reports, a geometry
+export report, and a content-addressed texture folder. Keep the complete set together.
+
+The DAE uses unique names with a common static detail suffix under `base00/start01`.
+Blender object names and placements remain unchanged. This does not create collision
+meshes or an optimized multi-LOD asset.
 
 ## Complete Option Reference
 
@@ -161,7 +168,7 @@ Scaling can affect placement and should be verified in BeamNG.
 ### Approximate Glass
 
 - **Type:** Checkbox
-- **Default:** Disabled
+- **Default:** Enabled
 - **Purpose:** Converts unsupported glass refraction to an opacity-based BeamNG
   approximation.
 - **Disabled behavior:** Unsupported glass fails validation instead of being
@@ -169,8 +176,9 @@ Scaling can affect placement and should be verified in BeamNG.
 - **Enabled behavior:** **Glass Opacity** becomes available and the approximation
   is recorded in the material report.
 
-Enable it only when an opacity approximation is acceptable. It does not recreate
-physical refraction.
+Keep it checked for stadium previews when an opacity approximation is acceptable.
+It does not recreate physical refraction. Old saved presets may retain the previous
+off setting; check this box after an update if transmission materials are rejected.
 
 ### Glass Opacity
 
@@ -211,7 +219,8 @@ An export named `MyVenue.dae` writes:
 MyVenue.dae                    Geometry and material assignments
 MyVenue.materials.json         BeamNG material definitions
 MyVenue.material-report.json   Material mappings, textures, and approximations
-MyVenue.visibility.json        Included and excluded object audit
+MyVenue.visibility.json        Selected versus actually exported object audit
+MyVenue.export-report.json     Source-to-static-part names and evaluated omissions
 bmtex_<package-id>/            Content-addressed PNG authoring textures
 ```
 
@@ -220,6 +229,21 @@ Windows drive path. Let BeamNG cook authoring PNGs to DDS before distributing a
 final mod.
 
 ## Common Validation Errors
+
+Use **Stadium → Copy Last Error** for the complete error rather than a truncated
+notification. Diagnostics are kept in memory and are not saved into the venue.
+
+### Transmission Weight: enable Approximate Glass
+
+Check **Approximate Glass** in both Validate and Export. It defaults on in 1.1.2.
+Saved older presets can override that default. This uses opacity, not refraction.
+
+### Required stadium objects evaluated empty
+
+Inspect the named object's modifiers, Geometry Nodes and instance sources. The
+export stops before replacing files if a required object unexpectedly has no
+geometry. Verified seat masks that intentionally hide every point are reported
+as empty without fabricating seats.
 
 ### Export inside a levels/vehicles/art folder, or set Game Texture Directory
 

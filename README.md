@@ -3,17 +3,21 @@
 **A Blender 5.2 exporter for organized BeamNG stadium, arena, and venue packages.**
 
 [![Blender 5.2](https://img.shields.io/badge/Blender-5.2.x-F5792A?logo=blender&logoColor=white)](https://www.blender.org/)
-[![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-2ea44f)](CHANGELOG.md)
+[![Version 1.1.2](https://img.shields.io/badge/version-1.1.2-2ea44f)](CHANGELOG.md)
 [![License GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE.txt)
 
 BM Stadium DAE Exporter packages large, static venue scenes as BeamNG-ready
 COLLADA exports. One export writes the `.dae`, BeamNG `.materials.json`, baked
-textures, a material report, and a visibility report while leaving the original
-Blender scene unchanged.
+textures, a material report, a visibility report, and a geometry export report
+while leaving the original Blender scene unchanged.
 
-Current release: **v1.1.0**, verified with **Blender 5.2.3**.
+Current release: **v1.1.2**, verified with **Blender 5.2.3**.
 
 ## Highlights
+
+- **Approximate Glass** is checked by default in both Export and Validate.
+- **Copy Last Error** captures the complete error, versions and settings for support.
+- Unique static part names prevent numeric source suffixes from becoming accidental detail levels.
 
 - Exports evaluated modifiers, placed instances, UVs, vertex colors, and materials.
 - Bakes Blender PBR materials into organized, content-addressed texture folders.
@@ -26,7 +30,7 @@ Current release: **v1.1.0**, verified with **Blender 5.2.3**.
 
 ## Download
 
-### [Download BM Stadium DAE Exporter v1.1.0 for Blender 5.2](https://github.com/Mjamfan22/BM-Stadium-DAE-Exporter/releases/download/v1.1.0/bm_stadium_dae_v1.1.0_Blender_5.2.zip)
+### [Download BM Stadium DAE Exporter v1.1.2 for Blender 5.2](https://github.com/Mjamfan22/BM-Stadium-DAE-Exporter/releases/download/v1.1.2/bm_stadium_dae_v1.1.2_Blender_5.2.zip)
 
 Do not extract the ZIP before installing it in Blender.
 
@@ -36,9 +40,9 @@ Do not extract the ZIP before installing it in Blender.
 2. Open **Blender 5.2.x**.
 3. Open **Edit → Preferences → Add-ons**.
 4. Open the Add-ons menu and choose **Install from Disk…**.
-5. Select `bm_stadium_dae_v1.1.0_Blender_5.2.zip`.
+5. Select `bm_stadium_dae_v1.1.2_Blender_5.2.zip`.
 6. Enable **BM Stadium DAE Exporter**.
-7. Confirm that **Stadium** appears in the 3D View sidebar (`N` key).
+7. Restart Blender after updating. Confirm that **Stadium** appears in the 3D View sidebar (`N` key).
 
 The exporter is also available through **File → Export → BeamNG Stadium (.dae)**.
 
@@ -64,7 +68,7 @@ For the complete walkthrough, see the **[User Guide](docs/USER-GUIDE.md)**.
 | Checkbox | Default | What It Does | When to Change It |
 |---|---:|---|---|
 | **Include Eye-hidden Placed Geometry** | On | Includes real venue placements hidden with Blender's eye/H controls. Source prototypes, light blockers, render-disabled objects, and disabled collections remain excluded. | Turn it off only when intentionally exporting visible placements alone. Run **Check Stadium Visibility** either way. |
-| **Approximate Glass** | Off | Replaces unsupported refraction with a BeamNG opacity approximation. Enabling it reveals **Glass Opacity**. | Enable only after accepting that the result is an approximation, then inspect it in BeamNG. Leave it off to make unsupported glass fail validation instead of silently changing appearance. |
+| **Approximate Glass** | On | Uses an opacity approximation for glass; refraction is not preserved. Shows **Glass Opacity**. | Keep it checked for these stadium previews. Disable it if you prefer transmission materials to fail validation. Old saved presets can retain the previous off setting. |
 | **Approximate Sheen** | On | Keeps the base PBR color and roughness for cloth materials and records that BeamNG has no separate Blender cloth-sheen lobe. | Keep it on for normal venue fabrics. Turn it off when you prefer validation to reject materials that need a sheen approximation. Linked sheen graphs remain unsupported. |
 
 ### Other Controls
@@ -90,6 +94,7 @@ MyVenue.dae
 MyVenue.materials.json
 MyVenue.material-report.json
 MyVenue.visibility.json
+MyVenue.export-report.json
 bmtex_<package-id>/
   <content-addressed PNG textures>
 ```
@@ -139,6 +144,13 @@ branch and pull request; see **[Team Update Workflow](docs/TEAM-WORKFLOW.md)** a
 the **[Changelog](CHANGELOG.md)**.
 
 ## Support
+
+If export or validation fails, use **Stadium → Copy Last Error** and paste the
+result into your report. It includes local file paths; redact personal paths
+before posting publicly. Nothing is sent automatically.
+
+See [v1.1.2 validation and limits](docs/QA-v1.1.2.md). Representative material
+exports passed; this release is not a certification of every full venue in BeamNG.
 
 Use GitHub Issues for reproducible exporter problems. Include:
 
