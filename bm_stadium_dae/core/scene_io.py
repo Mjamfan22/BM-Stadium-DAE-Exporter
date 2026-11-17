@@ -449,7 +449,7 @@ def build_hierarchy(builder, data, mesh_objects):
     builder.context.view_layer.update()
 
 
-def finish_dae(path, data, export_objects, scale):
+def finish_dae(path, data, export_objects, scale, static_stadium=False):
     """Keep the native mesh writer, write exact matrices and hierarchy in XML."""
     tree = ET.parse(path); root = tree.getroot()
     geometries = root.findall('./' + tag('library_geometries') + '/' + tag('geometry'))
@@ -497,10 +497,15 @@ def finish_dae(path, data, export_objects, scale):
         return node
     for obj in export_objects:
         emit(obj)
+    profile = None
+    if static_stadium:
+        from .static_shape import apply_static_profile
+        profile = apply_static_profile(root)
     tree.write(path, encoding='utf-8', xml_declaration=True)
+    return profile
 
 
-def write_dae(path, data, objects, scale):
+def write_dae(path, data, objects, scale, static_stadium=False):
     """Write standards-based XML with unique IDs and float32 round-trip precision."""
     from datetime import datetime, timezone
     root = ET.Element(tag('COLLADA'), {'version': '1.4.1'})
@@ -611,7 +616,7 @@ def write_dae(path, data, objects, scale):
     scene = ET.SubElement(root, tag('scene'))
     ET.SubElement(scene, tag('instance_visual_scene'), {'url': '#BeamNGScene'})
     ET.ElementTree(root).write(path, encoding='utf-8', xml_declaration=True)
-    finish_dae(path, data, objects, scale)
+    return finish_dae(path, data, objects, scale, static_stadium=static_stadium)
 
 
 def bake_cache_transforms(data, objects, scale):

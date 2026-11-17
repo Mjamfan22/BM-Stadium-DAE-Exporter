@@ -27,6 +27,7 @@ class MeshExtractor:
         self.exported_objects = []
         self.material_sources = {}
         self.active_uv_names = []
+        self.omitted_objects = []
 
     def extract(self, objects):
         """Extract mesh data from Blender objects into a dict for cdae_native."""
@@ -35,6 +36,7 @@ class MeshExtractor:
         self.exported_objects = []
         self.material_sources = {}
         self.active_uv_names = []
+        self.omitted_objects = []
 
         # Pre-populate materials from stored DAE order to preserve unused materials
         if self.dae_material_order:
@@ -85,6 +87,10 @@ class MeshExtractor:
 
             with export_mesh(obj, self.apply_modifiers) as (mesh, eval_obj):
                 if mesh is None or (not len(mesh.polygons) and not len(mesh.edges)):
+                    from .geometry_audit import expected_empty_seats
+                    detail = expected_empty_seats(obj)
+                    self.omitted_objects.append(dict(name=obj.name, expected=detail is not None,
+                                                     **(detail or {'reason':'no_evaluated_faces_or_edges'})))
                     self.report('WARNING', f'{obj.name}: no evaluated faces or edges; omitted from static export')
                     continue
                 # Build local-to-global material index mapping
